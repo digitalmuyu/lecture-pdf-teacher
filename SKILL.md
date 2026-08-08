@@ -8,7 +8,7 @@ description: Read uploaded PDF courseware, extract and understand its content, e
 ## Workflow
 
 1. Identify the source PDF path from the user message or attached file context.
-2. Use the PDF skill or available PDF extraction tools to read the courseware. Prefer text extraction first; use OCR only when pages are scanned or mostly image-based.
+2. Use the host agent's native PDF text extraction or OCR capability to read the courseware. If the host provides a dedicated PDF skill or tool, use it; otherwise use any available parser. Prefer text extraction first; use OCR only when pages are scanned or mostly image-based.
 3. Inspect enough page structure to preserve the courseware order: title, section headings, slide/page sequence, equations, diagrams, examples, and exercises.
 4. Teach the material in Chinese by default unless the user asks for another language.
 5. Compose the full explanation as the canonical Markdown note body for the saved file. The chat response should not reproduce the note in full.
@@ -16,6 +16,16 @@ description: Read uploaded PDF courseware, extract and understand its content, e
 7. Save the full explanation as a Markdown file in the same directory as the original PDF.
 8. Delete any temporary Markdown draft file created only to pass content into the save script before completing the task.
 9. In the final chat response, briefly describe what the saved note covers, report the exact saved Markdown path, and mention any extraction limitations. Do not paste the complete note content unless the user explicitly asks for it.
+
+## Host Agent Compatibility
+
+Keep the workflow independent of a particular agent, tool name, or user interface.
+
+- When the host agent supports automatic Agent Skills discovery, install this folder according to that agent's skill-directory rules.
+- When automatic discovery is unavailable, provide the path to this folder and ask the agent to read `SKILL.md` before processing the PDF.
+- Use the host agent's available PDF extraction and OCR tools. Do not assume that a tool named `pdf` or a specific MCP server exists.
+- Run `scripts/save_lecture_notes.py` with the host environment's Python 3 command, such as `python` or `python3`.
+- Treat `agents/openai.yaml` as optional OpenAI/Codex interface metadata. The core workflow is defined by `SKILL.md` and must remain usable when that file is ignored.
 
 ## Teaching Style
 
@@ -110,13 +120,15 @@ Include page or slide references like `page 3` when the source location is known
 
 ## Saving The File
 
-Use `scripts/save_lecture_notes.py` to write the Markdown file beside the source PDF.
+Use the bundled `scripts/save_lecture_notes.py` helper to write the Markdown file beside the source PDF.
 
 Recommended command:
 
 ```bash
 python scripts/save_lecture_notes.py --pdf "<path-to-source.pdf>" --content-file "<path-to-temp-notes.md>"
 ```
+
+If the host uses a different Python command, substitute it for `python`.
 
 The script creates a file named `<original-pdf-stem>_讲解笔记.md` in the original PDF directory.
 
