@@ -91,4 +91,4 @@ lecture-pdf-teacher/
 
 ## 许可证
 
-当前仓库尚未指定许可证。公开发布前，请根据你的使用和分发计划补充合适的许可证。
+本项目采用 MIT License。详情请参见 [LICENSE](LICENSE) 文件。
